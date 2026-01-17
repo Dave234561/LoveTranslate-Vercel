@@ -17,10 +17,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Note: registerRoutes appelle setupAuth qui configure les sessions et passport
 let routesRegistered = false;
 const routesPromise = registerRoutes(app).then(() => {
   routesRegistered = true;
-  console.log("Routes registered successfully");
+  console.log("Routes and Auth registered successfully");
 });
 
 // Middleware pour attendre que les routes soient prêtes
