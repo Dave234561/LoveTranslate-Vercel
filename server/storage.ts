@@ -262,7 +262,7 @@ export class MemStorage implements IStorage {
       ...message, 
       id, 
       sentAt: now, 
-      read: message.read ?? false 
+      read: (message as any).read ?? false 
     };
     this.messages.set(id, newMessage);
     
