@@ -17,15 +17,31 @@ app.use((req, res, next) => {
   next();
 });
 
-// Note: registerRoutes appelle setupAuth qui configure les sessions et passport
 let routesRegistered = false;
-const routesPromise = registerRoutes(app).then(() => {
-  routesRegistered = true;
-  console.log("Routes and Auth registered successfully");
-});
+let registrationError: any = null;
+
+const routesPromise = (async () => {
+  try {
+    console.log("Starting route registration...");
+    await registerRoutes(app);
+    routesRegistered = true;
+    console.log("Routes and Auth registered successfully");
+  } catch (err) {
+    console.error("Failed to register routes:", err);
+    registrationError = err;
+    throw err;
+  }
+})();
 
 // Middleware pour attendre que les routes soient prêtes
 app.use(async (req, res, next) => {
+  if (registrationError) {
+    return res.status(500).json({ 
+      message: "Internal Server Error: Route registration failed",
+      error: registrationError.message 
+    });
+  }
+  
   if (!routesRegistered) {
     await routesPromise;
   }
