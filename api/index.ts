@@ -9,27 +9,6 @@ app.use(express.urlencoded({ extended: false }));
 // Middleware de log global pour Vercel
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: any = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-      console.log(logLine);
-    }
-  });
-
   next();
 });
 
@@ -46,17 +25,9 @@ async function ensureRoutes() {
       console.log("Starting route registration...");
       await registerRoutes(app);
       
-      // Route de test pour forcer une session
-      app.get("/api/force-login", async (req, res) => {
-        const user = await storage.getUserByUsername("test");
-        if (user) {
-          req.login(user, (err) => {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ message: "Forced login successful", user });
-          });
-        } else {
-          res.status(404).json({ message: "Test user not found" });
-        }
+      // Route de test simple
+      app.get("/api/ping", (req, res) => {
+        res.json({ message: "pong", time: new Date().toISOString() });
       });
 
       routesRegistered = true;
@@ -78,13 +49,13 @@ app.use(async (req, res, next) => {
     if (registrationError) {
       return res.status(500).json({ 
         message: "Internal Server Error: Route registration failed",
-        error: registrationError.message 
+        error: String(registrationError)
       });
     }
     next();
   } catch (err: any) {
     console.error("Initialization error middleware:", err);
-    res.status(500).json({ message: "Initialization error", error: err.message });
+    res.status(500).json({ message: "Initialization error", error: String(err) });
   }
 });
 
