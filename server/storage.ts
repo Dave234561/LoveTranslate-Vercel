@@ -248,7 +248,11 @@ export class MemStorage implements IStorage {
   async getMessages(conversationId: number): Promise<Message[]> {
     return Array.from(this.messages.values())
       .filter((message) => message.conversationId === conversationId)
-      .sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime());
+      .sort((a, b) => {
+        const timeA = a.sentAt ? new Date(a.sentAt).getTime() : 0;
+        const timeB = b.sentAt ? new Date(b.sentAt).getTime() : 0;
+        return timeA - timeB;
+      });
   }
 
   async createMessage(message: InsertMessage): Promise<Message> {
