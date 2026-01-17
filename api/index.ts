@@ -1,5 +1,6 @@
 import express from 'express';
 import { registerRoutes } from '../server/routes';
+import { storage } from '../server/storage';
 
 const app = express();
 app.use(express.json());
@@ -44,6 +45,20 @@ async function ensureRoutes() {
     try {
       console.log("Starting route registration...");
       await registerRoutes(app);
+      
+      // Route de test pour forcer une session
+      app.get("/api/force-login", async (req, res) => {
+        const user = await storage.getUserByUsername("test");
+        if (user) {
+          req.login(user, (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Forced login successful", user });
+          });
+        } else {
+          res.status(404).json({ message: "Test user not found" });
+        }
+      });
+
       routesRegistered = true;
       console.log("Routes and Auth registered successfully");
     } catch (err) {
