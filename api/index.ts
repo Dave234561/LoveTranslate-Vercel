@@ -19,7 +19,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true, // Vercel is always HTTPS
+    secure: false, // Set to false for debugging if needed, but Vercel is HTTPS
     sameSite: 'lax',
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   }
@@ -60,6 +60,7 @@ app.use(async (req, res, next) => {
     }
     next();
   } catch (err) {
+    console.error("Request error:", err);
     res.status(500).json({ message: "Server Error", error: String(err) });
   }
 });
