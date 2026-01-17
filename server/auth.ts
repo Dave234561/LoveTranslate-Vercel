@@ -39,6 +39,7 @@ export async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  console.log("Setting up Auth...");
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "amour-lingua-session-secret",
     resave: false,
