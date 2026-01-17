@@ -162,7 +162,12 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      name: insertUser.name ?? null,
+      langPreference: insertUser.langPreference ?? "en"
+    };
     this.users.set(id, user);
     return user;
   }
@@ -199,7 +204,9 @@ export class MemStorage implements IStorage {
     const newTranslation: Translation = { 
       ...translation, 
       id, 
-      createdAt: now.toISOString() 
+      userId: translation.userId ?? null,
+      favorite: translation.favorite ?? false,
+      createdAt: now
     };
     this.translations.set(id, newTranslation);
     return newTranslation;
@@ -231,7 +238,7 @@ export class MemStorage implements IStorage {
     const newConversation: Conversation = { 
       ...conversation, 
       id, 
-      lastMessageAt: now.toISOString() 
+      lastMessageAt: now
     };
     this.conversations.set(id, newConversation);
     return newConversation;
@@ -250,15 +257,15 @@ export class MemStorage implements IStorage {
     const newMessage: Message = { 
       ...message, 
       id, 
-      sentAt: now.toISOString(), 
-      read: false 
+      sentAt: now, 
+      read: message.read ?? false 
     };
     this.messages.set(id, newMessage);
     
     // Update the conversation's lastMessageAt
     const conversation = await this.getConversation(message.conversationId);
     if (conversation) {
-      await this.updateConversation(conversation.id, { lastMessageAt: now.toISOString() });
+      await this.updateConversation(conversation.id, { lastMessageAt: now });
     }
     
     return newMessage;
