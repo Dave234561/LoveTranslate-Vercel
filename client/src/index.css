@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --love-gradient: linear-gradient(135deg, hsl(338, 95%, 65%) 0%, hsl(330, 90%, 75%) 100%);
+    --love-light-bg: hsl(335, 100%, 97%);
+    --love-medium-bg: hsl(335, 60%, 92%);
+    --love-dark-accent: hsl(338, 80%, 50%);
+    --love-shadow: 0 4px 14px rgba(222, 50, 111, 0.08);
+    --love-glow: 0 0 15px rgba(222, 50, 111, 0.2);
+    --love-gradient-hover: linear-gradient(135deg, hsl(338, 95%, 60%) 0%, hsl(330, 90%, 70%) 100%);
+    --love-gradient-soft: linear-gradient(135deg, hsl(338, 80%, 92%) 0%, hsl(330, 75%, 98%) 100%);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background: linear-gradient(150deg, var(--love-light-bg) 0%, white 100%);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+
+  h1 {
+    @apply text-3xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+
+  h3 {
+    @apply text-xl font-medium;
+  }
+
+  /* Customize scrollbar for the love theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--love-light-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(338, 70%, 80%);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(338, 80%, 75%);
+  }
+}
+
+@layer components {
+  /* Card and container elements */
+  .love-card {
+    @apply rounded-xl overflow-hidden border border-primary/20 bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-200;
+  }
+
+  .love-card:hover {
+    @apply border-primary/30;
+    box-shadow: var(--love-shadow);
+  }
+
+  /* Button variants */
+  .love-gradient-btn {
+    @apply relative overflow-hidden text-white font-medium rounded-full shadow-sm transition-all duration-200;
+    background: var(--love-gradient);
+  }
+
+  .love-gradient-btn:hover {
+    @apply shadow-md;
+    background: var(--love-gradient-hover);
+  }
+
+  .love-gradient-btn:active {
+    transform: translateY(1px);
+  }
+
+  .love-btn-outline {
+    @apply rounded-full border border-primary/40 bg-white/80 text-primary px-4 py-1.5 shadow-sm hover:bg-primary/5 hover:border-primary/60 transition-all duration-200;
+  }
+
+  /* Headers and dividers */
+  .love-gradient-header {
+    @apply bg-gradient-to-r from-primary/15 to-transparent border-b border-primary/10 px-4 py-2.5;
+  }
+
+  .love-divider {
+    @apply h-px w-full bg-gradient-to-r from-primary/20 via-primary/10 to-transparent my-4;
+  }
+
+  /* Panel elements */
+  .love-glass-panel {
+    @apply bg-white/70 backdrop-blur-sm rounded-xl border border-primary/20 shadow-sm;
+  }
+
+  .love-glass-input {
+    @apply bg-white/80 backdrop-blur-sm border-primary/20 rounded-lg focus:border-primary/50 focus:ring-primary/30 shadow-inner;
+  }
+
+  /* Navigation elements */
+  .love-nav-tab {
+    @apply rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200;
+  }
+
+  .love-nav-tab.active {
+    @apply text-white shadow-sm;
+    background: var(--love-gradient);
+  }
+
+  .love-nav-tab:not(.active) {
+    @apply text-primary/80 bg-white/80 hover:bg-primary/10;
+  }
+
+  /* Badges and tags */
+  .love-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary;
+  }
+
+  .love-badge-outlined {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-white border border-primary/20 text-primary/80;
+  }
+
+  /* Animation classes */
+  .love-pulse {
+    animation: love-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes love-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+}
