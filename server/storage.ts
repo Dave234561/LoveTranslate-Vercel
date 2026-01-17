@@ -72,6 +72,7 @@ export class MemStorage implements IStorage {
     
     // Initialize with some sample data
     this.seedData();
+    console.log("Storage initialized with users:", Array.from(this.users.values()).map(u => u.username));
   }
 
   private seedData() {
