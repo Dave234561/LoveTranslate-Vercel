@@ -33,33 +33,42 @@ app.use((req, res, next) => {
 
 let routesRegistered = false;
 let registrationError: any = null;
+let registrationPromise: Promise<void> | null = null;
 
-const routesPromise = (async () => {
-  try {
-    console.log("Starting route registration...");
-    await registerRoutes(app);
-    routesRegistered = true;
-    console.log("Routes and Auth registered successfully");
-  } catch (err) {
-    console.error("Failed to register routes:", err);
-    registrationError = err;
-    throw err;
-  }
-})();
+async function ensureRoutes() {
+  if (routesRegistered) return;
+  if (registrationPromise) return registrationPromise;
+  
+  registrationPromise = (async () => {
+    try {
+      console.log("Starting route registration...");
+      await registerRoutes(app);
+      routesRegistered = true;
+      console.log("Routes and Auth registered successfully");
+    } catch (err) {
+      console.error("Failed to register routes:", err);
+      registrationError = err;
+      throw err;
+    }
+  })();
+  
+  return registrationPromise;
+}
 
 // Middleware pour attendre que les routes soient prêtes
 app.use(async (req, res, next) => {
-  if (registrationError) {
-    return res.status(500).json({ 
-      message: "Internal Server Error: Route registration failed",
-      error: registrationError.message 
-    });
+  try {
+    await ensureRoutes();
+    if (registrationError) {
+      return res.status(500).json({ 
+        message: "Internal Server Error: Route registration failed",
+        error: registrationError.message 
+      });
+    }
+    next();
+  } catch (err: any) {
+    res.status(500).json({ message: "Initialization error", error: err.message });
   }
-  
-  if (!routesRegistered) {
-    await routesPromise;
-  }
-  next();
 });
 
 export default app;
