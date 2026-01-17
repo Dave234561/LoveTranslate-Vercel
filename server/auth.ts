@@ -111,8 +111,26 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+  app.post("/api/login", (req, res, next) => {
+    console.log("Login attempt for user:", req.body.username);
+    passport.authenticate("local", (err: any, user: any, info: any) => {
+      if (err) {
+        console.error("Passport auth error:", err);
+        return next(err);
+      }
+      if (!user) {
+        console.log("Passport auth failed:", info);
+        return res.status(401).json(info);
+      }
+      req.login(user, (err) => {
+        if (err) {
+          console.error("Login error:", err);
+          return next(err);
+        }
+        console.log("Login successful for user:", user.username);
+        res.status(200).json(user);
+      });
+    })(req, res, next);
   });
 
   app.post("/api/logout", (req, res, next) => {
