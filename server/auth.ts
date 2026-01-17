@@ -33,9 +33,10 @@ export async function hashPassword(password: string) {
 // For testing purposes, this is an extremely simplified password comparison
 // In a real app, you would use proper password hashing and comparison
 export async function comparePasswords(supplied: string, stored: string) {
+  console.log("Comparing passwords:", supplied, "vs", stored);
   // In development mode, just allow "password123" to work 
   // This is ONLY for demonstration/testing purposes!
-  return supplied === "password123" || supplied === stored;
+  return supplied === "password123" || supplied === stored || supplied === "password123";
 }
 
 export function setupAuth(app: Express) {
