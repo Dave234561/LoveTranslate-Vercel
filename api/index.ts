@@ -16,12 +16,12 @@ app.set('trust proxy', 1);
 app.use(session({
   store: storage.sessionStore,
   secret: process.env.SESSION_SECRET || 'amour-lingua-fallback-secret',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   proxy: true,
   cookie: {
-    secure: true,
-    sameSite: 'none', // Try none for cross-site if needed, or lax
+    secure: false, // Force false for debugging
+    sameSite: 'lax',
     maxAge: 30 * 24 * 60 * 60 * 1000
   }
 }));
@@ -33,6 +33,7 @@ app.use(passport.session());
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.log(`Session ID: ${req.sessionID}`);
+  console.log(`Headers: ${JSON.stringify(req.headers)}`);
   next();
 });
 
