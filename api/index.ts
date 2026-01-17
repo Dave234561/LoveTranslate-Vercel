@@ -17,9 +17,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Initialisation asynchrone des routes
-(async () => {
-  await registerRoutes(app);
-})();
+let routesRegistered = false;
+const routesPromise = registerRoutes(app).then(() => {
+  routesRegistered = true;
+  console.log("Routes registered successfully");
+});
+
+// Middleware pour attendre que les routes soient prêtes
+app.use(async (req, res, next) => {
+  if (!routesRegistered) {
+    await routesPromise;
+  }
+  next();
+});
 
 export default app;
