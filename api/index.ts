@@ -5,8 +5,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Middleware de log pour capturer les réponses JSON
+// Middleware de log global pour Vercel
 app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: any = undefined;
@@ -67,6 +68,7 @@ app.use(async (req, res, next) => {
     }
     next();
   } catch (err: any) {
+    console.error("Initialization error middleware:", err);
     res.status(500).json({ message: "Initialization error", error: err.message });
   }
 });
