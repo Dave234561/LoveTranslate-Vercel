@@ -18,10 +18,11 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'amour-lingua-fallback-secret',
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
-    secure: false, // Set to false for debugging if needed, but Vercel is HTTPS
-    sameSite: 'lax',
-    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+    secure: true,
+    sameSite: 'none', // Try none for cross-site if needed, or lax
+    maxAge: 30 * 24 * 60 * 60 * 1000
   }
 }));
 
@@ -31,6 +32,7 @@ app.use(passport.session());
 // Global logging
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log(`Session ID: ${req.sessionID}`);
   next();
 });
 
