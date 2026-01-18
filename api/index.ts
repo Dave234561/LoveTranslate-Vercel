@@ -32,7 +32,11 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.json({ 
     status: 'ok', 
     message: 'Express with Auth is working',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    env: {
+      has_db_url: !!process.env.DATABASE_URL,
+      node_env: process.env.NODE_ENV
+    }
   });
 });
 
@@ -53,7 +57,7 @@ export default async (req: any, res: any) => {
     res.status(500).json({
       error: "Internal Server Error",
       message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      stack: error.stack
     });
   }
 };
