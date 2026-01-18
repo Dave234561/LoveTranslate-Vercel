@@ -14,7 +14,7 @@ function isAuthenticated(req: Request, res: Response, next: NextFunction) {
 export function setupMessages(app: Express) {
   // Get all conversations for the current user
   app.get("/api/conversations", isAuthenticated, async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = (req.user as any)?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -31,7 +31,7 @@ export function setupMessages(app: Express) {
       });
 
       const { participantId } = createConversationSchema.parse(req.body);
-      const userId = req.user?.id;
+      const userId = (req.user as any)?.id;
 
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -73,7 +73,7 @@ export function setupMessages(app: Express) {
   // Get messages for a specific conversation
   app.get("/api/conversations/:id/messages", isAuthenticated, async (req: Request, res: Response) => {
     const conversationId = parseInt(req.params.id);
-    const userId = req.user?.id;
+    const userId = (req.user as any)?.id;
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -102,7 +102,7 @@ export function setupMessages(app: Express) {
 
       const { text } = sendMessageSchema.parse(req.body);
       const conversationId = parseInt(req.params.id);
-      const userId = req.user?.id;
+      const userId = (req.user as any)?.id;
 
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -138,7 +138,7 @@ export function setupMessages(app: Express) {
   // Mark all messages in a conversation as read
   app.post("/api/conversations/:id/read", isAuthenticated, async (req: Request, res: Response) => {
     const conversationId = parseInt(req.params.id);
-    const userId = req.user?.id;
+    const userId = (req.user as any)?.id;
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });

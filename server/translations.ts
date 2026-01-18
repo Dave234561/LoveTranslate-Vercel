@@ -15,7 +15,7 @@ export function setupTranslations(app: Express) {
   app.post("/api/translate", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { text, fromLang, toLang } = translateSchema.parse(req.body);
-      let userId: number | undefined = req.user?.id;
+      let userId: number | undefined = (req.user as any)?.id;
 
       // For testing purposes, if not logged in, use test user
       if (!userId) {
@@ -78,7 +78,7 @@ export function setupTranslations(app: Express) {
       }
     }
 
-    const userId = req.user?.id;
+    const userId = (req.user as any)?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -100,7 +100,7 @@ export function setupTranslations(app: Express) {
       }
     }
 
-    const userId = req.user?.id;
+    const userId = (req.user as any)?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -113,7 +113,7 @@ export function setupTranslations(app: Express) {
   app.patch("/api/translations/:id/favorite", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const translationId = parseInt(req.params.id);
-      let userId: number | undefined = req.user?.id;
+      let userId: number | undefined = (req.user as any)?.id;
       const { favorite } = req.body;
 
       // For testing purposes, if not logged in, use test user
