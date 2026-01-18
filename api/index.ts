@@ -36,13 +36,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
 // Immediate initialization
-setupAuth(app as any);
-registerRoutes(app as any).catch(err => {
+setupAuth(app);
+registerRoutes(app).catch(err => {
   console.error("Failed to register routes:", err);
 });
 

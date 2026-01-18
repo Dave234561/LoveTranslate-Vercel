@@ -1,7 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Express, Request, Response, NextFunction } from "express";
-import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
@@ -48,7 +47,7 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => done(null, (user as SelectUser).id));
   passport.deserializeUser(async (id: number, done) => {
     try {
       const user = await storage.getUser(id);
