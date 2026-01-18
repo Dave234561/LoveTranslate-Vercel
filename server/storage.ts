@@ -1,4 +1,4 @@
-import { users, translations, conversations, messages, type User, type InsertUser, type Translation, type InsertTranslation, type Conversation, type InsertConversation, type Message, type InsertMessage } from "@shared/schema";
+import { users, translations, conversations, messages, type User, type InsertUser, type Translation, type InsertTranslation, type Conversation, type InsertConversation, type Message, type InsertMessage } from "../shared/schema.js";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { eq, and, ne } from "drizzle-orm";
 import postgres from "postgres";
