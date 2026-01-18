@@ -40,10 +40,16 @@ app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-// Immediate initialization
-setupAuth(app);
-registerRoutes(app).catch(err => {
-  console.error("Failed to register routes:", err);
-});
+// Initialization flag
+let initialized = false;
 
-export default app;
+export default async (req: any, res: any) => {
+  if (!initialized) {
+    console.log("[API] Initializing routes and auth...");
+    setupAuth(app);
+    await registerRoutes(app);
+    initialized = true;
+    console.log("[API] Initialization complete.");
+  }
+  return app(req, res);
+};
