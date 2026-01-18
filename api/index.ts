@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import { registerRoutes } from '../server/routes';
@@ -30,15 +30,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Global logging
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  console.log(`Session ID: ${req.sessionID}`);
   next();
 });
 
 // Immediate initialization
-setupAuth(app);
-registerRoutes(app).catch(err => {
+setupAuth(app as any);
+registerRoutes(app as any).catch(err => {
   console.error("Failed to register routes:", err);
 });
 

@@ -13,7 +13,7 @@ function isAuthenticated(req: Request, res: Response, next: NextFunction) {
 
 export function setupMessages(app: Express) {
   // Get all conversations for the current user
-  app.get("/api/conversations", isAuthenticated, async (req, res) => {
+  app.get("/api/conversations", isAuthenticated, async (req: Request, res: Response) => {
     const userId = req.user?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -24,7 +24,7 @@ export function setupMessages(app: Express) {
   });
 
   // Create a new conversation
-  app.post("/api/conversations", isAuthenticated, async (req, res, next) => {
+  app.post("/api/conversations", isAuthenticated, async (req: Request, res: Response, next: NextFunction) => {
     try {
       const createConversationSchema = z.object({
         participantId: z.number().int().positive(),
@@ -71,7 +71,7 @@ export function setupMessages(app: Express) {
   });
 
   // Get messages for a specific conversation
-  app.get("/api/conversations/:id/messages", isAuthenticated, async (req, res) => {
+  app.get("/api/conversations/:id/messages", isAuthenticated, async (req: Request, res: Response) => {
     const conversationId = parseInt(req.params.id);
     const userId = req.user?.id;
 
@@ -94,7 +94,7 @@ export function setupMessages(app: Express) {
   });
 
   // Send a message in a conversation
-  app.post("/api/conversations/:id/messages", isAuthenticated, async (req, res, next) => {
+  app.post("/api/conversations/:id/messages", isAuthenticated, async (req: Request, res: Response, next: NextFunction) => {
     try {
       const sendMessageSchema = z.object({
         text: z.string().min(1).max(1000),
@@ -136,7 +136,7 @@ export function setupMessages(app: Express) {
   });
 
   // Mark all messages in a conversation as read
-  app.post("/api/conversations/:id/read", isAuthenticated, async (req, res) => {
+  app.post("/api/conversations/:id/read", isAuthenticated, async (req: Request, res: Response) => {
     const conversationId = parseInt(req.params.id);
     const userId = req.user?.id;
 

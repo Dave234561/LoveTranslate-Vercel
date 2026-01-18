@@ -3,14 +3,6 @@ import { storage } from "./storage";
 import { InsertTranslation } from "@shared/schema";
 import { z } from "zod";
 
-// Simple middleware to check if user is authenticated
-function isAuthenticated(req: Request, res: Response, next: NextFunction) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ message: "Unauthorized" });
-}
-
 export function setupTranslations(app: Express) {
   // Schema for translation requests
   const translateSchema = z.object({
@@ -20,7 +12,7 @@ export function setupTranslations(app: Express) {
   });
 
   // Endpoint to translate text
-  app.post("/api/translate", async (req, res, next) => {
+  app.post("/api/translate", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { text, fromLang, toLang } = translateSchema.parse(req.body);
       let userId: number | undefined = req.user?.id;
@@ -74,7 +66,7 @@ export function setupTranslations(app: Express) {
   });
 
   // Get all translations for the current user
-  app.get("/api/translations", async (req, res) => {
+  app.get("/api/translations", async (req: Request, res: Response) => {
     // For testing purposes, if not logged in, get test user's translations 
     if (!req.isAuthenticated()) {
       const testUser = await storage.getUserByUsername("test");
@@ -96,7 +88,7 @@ export function setupTranslations(app: Express) {
   });
 
   // Get favorite translations for the current user
-  app.get("/api/translations/favorites", async (req, res) => {
+  app.get("/api/translations/favorites", async (req: Request, res: Response) => {
     // For testing purposes, if not logged in, get test user's favorites
     if (!req.isAuthenticated()) {
       const testUser = await storage.getUserByUsername("test");
@@ -118,7 +110,7 @@ export function setupTranslations(app: Express) {
   });
 
   // Toggle favorite status of a translation
-  app.patch("/api/translations/:id/favorite", async (req, res, next) => {
+  app.patch("/api/translations/:id/favorite", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const translationId = parseInt(req.params.id);
       let userId: number | undefined = req.user?.id;
@@ -159,12 +151,9 @@ export function setupTranslations(app: Express) {
 // Mock translation functions for demo purposes
 function mockTranslateEnToFr(text: string): string {
   const translations: Record<string, string> = {
-    // Add capitalized versions and versions with punctuation
     "Hello, how are you?": "Bonjour, comment allez-vous?",
     "hello, how are you?": "Bonjour, comment allez-vous?",
     "hello how are you": "Bonjour, comment allez-vous?",
-    
-    // Original translations
     "hello": "bonjour",
     "how are you": "comment allez-vous",
     "good morning": "bonjour",
@@ -197,21 +186,11 @@ function mockTranslateEnToFr(text: string): string {
     "do you speak english": "parlez-vous anglais"
   };
 
-  // Remove punctuation for better matching but keep original text for output
   const textWithoutPunctuation = text.replace(/[.,?!;:]/g, '').trim();
-  
-  // Check for exact matches first with original text
-  if (translations[text]) {
-    return translations[text];
-  }
-  
-  // Check without punctuation
+  if (translations[text]) return translations[text];
   const lowerText = textWithoutPunctuation.toLowerCase();
-  if (translations[lowerText]) {
-    return translations[lowerText];
-  }
+  if (translations[lowerText]) return translations[lowerText];
 
-  // Try to find partial matches and translate word by word
   const words = lowerText.split(/\s+/);
   let translatedWords = [];
   let translatedAny = false;
@@ -225,16 +204,9 @@ function mockTranslateEnToFr(text: string): string {
     }
   }
 
-  if (translatedAny) {
-    return translatedWords.join(' ');
-  }
+  if (translatedAny) return translatedWords.join(' ');
+  if (lowerText.includes('hello') && lowerText.includes('how are you')) return "Bonjour, comment allez-vous?";
 
-  // Special case for "Hello, how are you?" and similar greetings
-  if (lowerText.includes('hello') && lowerText.includes('how are you')) {
-    return "Bonjour, comment allez-vous?";
-  }
-
-  // For demo purposes, add a French-like transformation as last resort
   return text
     .replace(/th/g, "z")
     .replace(/w/g, "v")
@@ -246,12 +218,9 @@ function mockTranslateEnToFr(text: string): string {
 
 function mockTranslateFrToEn(text: string): string {
   const translations: Record<string, string> = {
-    // Add capitalized versions and versions with punctuation
     "Bonjour, comment allez-vous?": "Hello, how are you?",
     "bonjour, comment allez-vous?": "Hello, how are you?",
     "bonjour comment allez-vous": "Hello, how are you?",
-    
-    // Original translations
     "bonjour": "hello",
     "comment allez-vous": "how are you",
     "bonsoir": "good evening",
@@ -283,21 +252,11 @@ function mockTranslateFrToEn(text: string): string {
     "parlez-vous anglais": "do you speak english"
   };
 
-  // Remove punctuation for better matching but keep original text for output
   const textWithoutPunctuation = text.replace(/[.,?!;:]/g, '').trim();
-  
-  // Check for exact matches first with original text
-  if (translations[text]) {
-    return translations[text];
-  }
-  
-  // Check without punctuation
+  if (translations[text]) return translations[text];
   const lowerText = textWithoutPunctuation.toLowerCase();
-  if (translations[lowerText]) {
-    return translations[lowerText];
-  }
+  if (translations[lowerText]) return translations[lowerText];
 
-  // Try to find partial matches and translate word by word
   const words = lowerText.split(/\s+/);
   let translatedWords = [];
   let translatedAny = false;
@@ -311,16 +270,9 @@ function mockTranslateFrToEn(text: string): string {
     }
   }
 
-  if (translatedAny) {
-    return translatedWords.join(' ');
-  }
+  if (translatedAny) return translatedWords.join(' ');
+  if (lowerText.includes('bonjour') && lowerText.includes('comment allez')) return "Hello, how are you?";
 
-  // Special case for "Bonjour, comment allez-vous?" and similar greetings
-  if (lowerText.includes('bonjour') && lowerText.includes('comment allez')) {
-    return "Hello, how are you?";
-  }
-
-  // For demo purposes, add an English-like transformation as last resort
   return text
     .replace(/ou/g, "u")
     .replace(/eau/g, "o")
