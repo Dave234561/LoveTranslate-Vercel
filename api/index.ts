@@ -36,35 +36,10 @@ app.use((req, res, next) => {
   next();
 });
 
-let initialized = false;
-let initError: any = null;
-
-async function initializeApp() {
-  if (initialized) return;
-  try {
-    console.log("Initializing Auth and Routes...");
-    setupAuth(app);
-    await registerRoutes(app);
-    initialized = true;
-    console.log("App initialized successfully");
-  } catch (err) {
-    console.error("Initialization failed:", err);
-    initError = err;
-    throw err;
-  }
-}
-
-app.use(async (req, res, next) => {
-  try {
-    await initializeApp();
-    if (initError) {
-      return res.status(500).json({ message: "Init Error", error: String(initError) });
-    }
-    next();
-  } catch (err) {
-    console.error("Request error:", err);
-    res.status(500).json({ message: "Server Error", error: String(err) });
-  }
+// Immediate initialization
+setupAuth(app);
+registerRoutes(app).catch(err => {
+  console.error("Failed to register routes:", err);
 });
 
 export default app;

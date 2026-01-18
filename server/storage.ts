@@ -40,12 +40,17 @@ export class DatabaseStorage implements IStorage {
     if (!connectionString) {
       throw new Error("DATABASE_URL is not set");
     }
-    const client = postgres(connectionString);
+    
+    // Use a single connection for the database
+    const client = postgres(connectionString, { prepare: false });
     this.db = drizzle(client);
     
+    // Session store with optimized connection
     this.sessionStore = new PostgresStore({
       conString: connectionString,
       createTableIfMissing: true,
+      schemaName: 'public',
+      tableName: 'session'
     });
   }
 
