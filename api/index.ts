@@ -32,11 +32,7 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.json({ 
     status: 'ok', 
     message: 'Express with Auth is working',
-    timestamp: new Date().toISOString(),
-    env: {
-      has_db_url: !!process.env.DATABASE_URL,
-      node_env: process.env.NODE_ENV
-    }
+    timestamp: new Date().toISOString()
   });
 });
 
