@@ -3,8 +3,8 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Express, Request, Response, NextFunction } from "express";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { storage } from "./storage";
-import { type User as SelectUser, insertUserSchema } from "@shared/schema";
+import { storage } from "./storage.js";
+import { type User as SelectUser, insertUserSchema } from "../shared/schema.js";
 import { z } from "zod";
 
 declare global {

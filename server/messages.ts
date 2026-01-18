@@ -1,6 +1,6 @@
 import { Express, Request, Response, NextFunction } from "express";
-import { storage } from "./storage";
-import { InsertMessage, InsertConversation } from "@shared/schema";
+import { storage } from "./storage.js";
+import { InsertMessage, InsertConversation } from "../shared/schema.js";
 import { z } from "zod";
 
 // Simple middleware to check if user is authenticated

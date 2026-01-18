@@ -1,6 +1,6 @@
 import { Express, Request, Response, NextFunction } from "express";
-import { storage } from "./storage";
-import { InsertTranslation } from "@shared/schema";
+import { storage } from "./storage.js";
+import { InsertTranslation } from "../shared/schema.js";
 import { z } from "zod";
 
 export function setupTranslations(app: Express) {
