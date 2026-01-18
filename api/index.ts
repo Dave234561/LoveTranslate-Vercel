@@ -31,8 +31,13 @@ app.use(passport.session());
 
 // Global logging
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log(`[API LOG] ${req.method} ${req.url}`);
   next();
+});
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
 // Immediate initialization
