@@ -5,14 +5,14 @@ import { registerRoutes } from '../server/routes';
 import { storage } from '../server/storage';
 import { setupAuth } from '../server/auth';
 
+console.log("[API] Module loading...");
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Trust proxy for Vercel
 app.set('trust proxy', 1);
 
-// Session configuration
 app.use(session({
   store: storage.sessionStore,
   secret: process.env.SESSION_SECRET || 'amour-lingua-fallback-secret',
@@ -29,27 +29,33 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Global logging
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`[API LOG] ${req.method} ${req.url}`);
   next();
 });
 
-// Health check
 app.get('/api/health', (_req: Request, res: Response) => {
+  console.log("[API] Health check requested");
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-// Initialization flag
 let initialized = false;
 
 export default async (req: any, res: any) => {
-  if (!initialized) {
-    console.log("[API] Initializing routes and auth...");
-    setupAuth(app);
-    await registerRoutes(app);
-    initialized = true;
-    console.log("[API] Initialization complete.");
+  console.log(`[API] Request received: ${req.method} ${req.url}`);
+  try {
+    if (!initialized) {
+      console.log("[API] Initializing routes and auth...");
+      setupAuth(app);
+      await registerRoutes(app);
+      initialized = true;
+      console.log("[API] Initialization complete.");
+    }
+    return app(req, res);
+  } catch (error: any) {
+    console.error('[API] Fatal Error:', error);
+    if (!res.headersSent) {
+      res.status(500).send(`Internal Server Error: ${error.message}`);
+    }
   }
-  return app(req, res);
 };
